@@ -1,0 +1,50 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h> // so we can use free & exit failure
+#include <string.h> // strtok_r() & other string functions
+
+int main() {
+
+  char *buff =
+      NULL; /* point to a dynamically allocated buffer where getline stores user
+               input it is NULL so getline knows to allocate it*/
+  size_t size =
+      0; // capacity of the buffer, getline will update it if it resizes buffer
+
+  printf("Please enter some text: ");
+  ssize_t num_char = getline(&buff, &size, stdin); /* getline reads entire line
+from stdin 1st param: addy of buffer pointer, so getline can allocate/resize
+2nd: address of size variable
+stdin: input source
+num_char: number of characters read, returns -1 on error. ssize_t so value can
+be negative
+                                                    */
+                                                   // error checking
+  if (num_char == -1) {
+    perror("getline has failed");
+    free(buff);
+    return EXIT_FAILURE;
+  }
+  // removes trailing newline character
+  if (num_char > 0 && buff[num_char - 1] == '\n') {
+    buff[num_char - 1] = '\0';
+  }
+
+  printf("Tokens:\n");
+
+  // strtok_r updates to keep track of its position in the string
+  char *saveptr = NULL;
+  // tokenize buff, strtok_r stores progress in &saveptr
+  char *tok = strtok_r(buff, " ", &saveptr);
+
+  // keep going until token is NULL
+  while (tok != NULL) {
+    printf("   %s\n", tok);
+    tok = strtok_r(NULL, " ", &saveptr);
+  }
+
+  // free memory getline allocated
+  free(buff);
+
+  return 0;
+}
