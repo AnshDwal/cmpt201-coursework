@@ -1,0 +1,10 @@
+#include <stdio.h>
+
+int main () {
+
+  printf("Enter programs to run.\n");
+  buff = 0;
+  bufflen = NULL
+  programs = getline(
+
+}
