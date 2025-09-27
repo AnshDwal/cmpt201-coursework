@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+int main(void) {
+
+  char *buffer = NULL;
+  size_t buffer_len = 0;
+  char *userinputs[5] = {NULL, NULL, NULL, NULL, NULL};
+  int count = 0;
+  int next_line = 0;
+
+  while (1) {
+    printf("Enter input: ");
+    if (getline(&buffer, &buffer_len, stdin) == -1) {
+      break;
+    }
+
+    for (int i = 0; buffer[i] != '\0'; i++) {
+      if (buffer[i] == '\n') {
+        buffer[i] = '\0';
+        break;
+      }
+    }
+
+    free(userinputs[next_line]);
+    int x = 0;
+
+    while (buffer[x] != '\0') {
+      x++;
+    }
+
+    userinputs[next_line] = (char *)malloc(x + 1);
+
+    if (!userinputs[next_line]) {
+
+      printf("memory allocation failed\n");
+      break;
+    }
+
+    for (int i = 0; i <= x; i++) {
+
+      userinputs[next_line][i] = buffer[i];
+    }
+
+    next_line = (next_line + 1) % 5;
+
+    if (count < 5) {
+
+      count++;
+    }
+
+    if (buffer[0] == 'p' && buffer[1] == 'r' && buffer[2] == 'i' &&
+        buffer[3] == 'n' && buffer[4] == 't' && buffer[5] == '\0') {
+      int start = (next_line - count + 5) % 5;
+
+      for (int i = 0; i < count; i++) {
+        int idx = (start + i) % 5;
+        printf("%s\n", userinputs[idx] ? userinputs[idx] : "");
+      }
+    }
+  }
+
+  for (int i = 0; i < 5; i++) {
+    free(userinputs[i]);
+
+    free(buffer);
+    return 0;
+  }
+}
