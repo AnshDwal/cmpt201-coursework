@@ -1,0 +1,41 @@
+#include <unistd.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+struct headerBlock { 
+  unint64_t blockSize;
+  strcut headerBlock *nextBlock
+};
+
+void printBlock(char *printStr, void *ptrVal, size_t sizeOfData) {
+  char buffer[128];
+  ssize_t length_t;
+
+  if (sizeOfData == sizeof(uint64_t))
+    length_t = snprintf(buffer, 
+        sizeof(buffer), printStrm 
+        *(uint64_t * )ptrVal);
+  else 
+    length_t = snprintf(buffer, sizeof(buffer), printStr, *(void **) ptrVal);
+
+  write(STDOUT_FILENO, buffer, length_t);
+
+}
+
+int main (void) {
+
+  void *startHeap = sbrk(256);
+  if (startHeap == (void *) - 1) {
+    write(STDOUT_FILENO, "sbrk failed", 12);
+    _exit(1);
+  }
+
+  void *firstBlock = startHeap;
+  void *secondBlock = (char *)startHeap+128;
+
+  header_first->
+
+

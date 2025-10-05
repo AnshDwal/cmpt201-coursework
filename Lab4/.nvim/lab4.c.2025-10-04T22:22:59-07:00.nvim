@@ -1,0 +1,78 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+struct headerBlock {
+  uint64_t blockSize;
+  struct headerBlock *nextBlock;
+};
+
+void printBlock(char *printStr, void *ptrVal, size_t sizeOfData) {
+  char buffer[128];
+  ssize_t length_t;
+
+  if (sizeOfData == sizeof(uint64_t))
+    length_t = snprintf(buffer, sizeof(buffer), printStr, *(uint64_t *)ptrVal);
+  else
+    length_t = snprintf(buffer, sizeof(buffer), printStr, *(void **)ptrVal);
+
+  write(STDOUT_FILENO, buffer, length_t);
+}
+
+int main(void) {
+
+  void *startHeap = sbrk(256);
+  if (startHeap == (void *)-1) {
+    write(STDOUT_FILENO, "sbrk failed", 12);
+    _exit(1);
+  }
+
+  void *firstBlock = startHeap;
+  void *secondBlock = (char *)startHeap + 128;
+
+
+  struct headerBlock *header_first=(struct headerBlock *) firstBlock;
+  struct headerBlock *header_second= (struct headerBlock *) secondBlock;
+
+  header_first->blockSize = 128;
+  header_first->nextBlock= NULL;
+
+  header_second->blockSize=128;
+  header_second->nextBlock= header_first;
+
+  printBlock("1st block address: %p\n", &header_first, sizeof(header_first));
+  printBlock("2nd block address: %p\n", &header_second, sizeof(header_second));
+
+  printBlock("1st block size: %lu\n", &header_first->blockSize, sizeof(header_first->blockSize));
+  printBlock("1st block next: %p\n", &header_first->nextBlock, sizeof(header_first->nextBlock));
+
+  printBlock("2nd block size: %lu\n",&header_second->blockSize, sizeof(header_second->blockSize));
+  printBlock("2nd block next: %p\n", &header_second->nextBlock, sizeof(header_second->nextBlock));
+
+  size_t byteHead =sizeof(struct headerBlock);
+  size_t bytedata= 128-byteHead;
+
+  unsigned char *data1= (unsigned char *)header_first+byteHead;
+
+  unsigned char *data2= (unsigned char *)header_second +byteHead;
+
+  memset(data1, 0, bytedata);
+
+  memset(data2, 1, bytedata);
+  
+  for (size_t index = 0; index<bytedata; index++){
+    uint64_t byteVal = data1[index];
+    printBlock("%lu/n", &byteVal, sizeof(byteVal));
+  }
+
+  for (size_t index = 0;index<bytedata; index++){
+    uint64_t byteVal=data2[index];
+    printBlock("%lu\n",&byteVal, sizeof(byteVal));
+  }
+
+  return 0;
+
+}
+
