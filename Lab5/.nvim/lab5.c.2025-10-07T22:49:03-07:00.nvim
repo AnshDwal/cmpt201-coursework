@@ -83,8 +83,8 @@ int main(void) {
 
   return 0;
 }
-/*
-
+/* 
+ 
 Part 2 Pseudo code algo for coalescing contiguous free blocks
 
 operation coalesce(newfreedblock):
@@ -95,12 +95,13 @@ operation coalesce(newfreedblock):
     previous = current
     current = current.next
 
-  if previous not equal oto NULL and the previous.addy + previousSize equal
-newfreedblock): previousSize = previousSize + newfreedblock newfreedblock =
-previous else:
+  if previous not equal oto NULL and the previous.addy + previousSize equal newfreedblock):
+    previousSize = previousSize + newfreedblock
+    newfreedblock = previous
+  else:
 
     newfreedblock = current
-    if previous is NOT NULL then
+    if previous is NOT NULL then 
       previous.next = newfreedblock
     else:
       head = newfreedblock
