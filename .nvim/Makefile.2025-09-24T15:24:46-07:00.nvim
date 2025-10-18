@@ -1,0 +1,20 @@
+CC = clang
+CLAGS = -Wall -Wextra -O2
+
+
+all: app
+
+app: main.o file.o quiz.o
+	$(CC) $(CFLAGS) -o app main.o file.o quiz.o
+
+main.o: main.c
+	$(CC) $(CFLAGS) -c main.c
+
+file.o: file.c
+	$(CC) $(CFLAGS) -c file.c
+
+quiz.o: quiz.c
+	$(CC) $(CFLAGS) -c quiz.c
+
+clean:
+	rm -f *.o app

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+int main () {
+  pid=fork();
+  
+}
