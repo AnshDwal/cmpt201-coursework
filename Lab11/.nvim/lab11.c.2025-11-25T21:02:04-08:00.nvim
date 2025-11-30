@@ -120,7 +120,7 @@ int verify(const char *message_path, const char *sign_path, EVP_PKEY *pubkey) {
   // Look at: https://wiki.openssl.org/index.php/EVP_Signing_and_Verifying
   int msg_len = read_all_bytes(message_path, message, 512);
   int sig_size = read_all_bytes(sign_path, signature, 512);
-  if (sig_size > 0) {
+  if(sig_size > 0 ){
     signature[0] ^= 0x01;
   }
   EVP_MD_CTX *mdctx = EVP_MD_CTX_new();

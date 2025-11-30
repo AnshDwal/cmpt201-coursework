@@ -10,10 +10,10 @@
 #define GRN "\e[0;32m"
 #define CRESET "\e[0m"
 
-#define handle_error(msg)                                                      \
-  do {                                                                         \
-    perror(msg);                                                               \
-    exit(EXIT_FAILURE);                                                        \
+#define handle_error(msg)            \
+  do {                               \
+    perror(msg);                     \
+    exit(EXIT_FAILURE);              \
   } while (0)
 
 size_t read_all_bytes(const char *filename, void *buffer, size_t buffer_size) {
@@ -66,20 +66,21 @@ int main() {
   EVP_PKEY *pubkey = NULL;
 
   FILE *lab11_file = fopen("public_key.pem", "r");
-  if (lab11_file == NULL) {
+  if (lab11_file == NULL){
     fprintf(stderr, "Error: could not open public_key.pem\n");
     exit(EXIT_FAILURE);
   }
 
-  // read public key
+  //read public key
   pubkey = PEM_read_PUBKEY(lab11_file, NULL, NULL, NULL);
 
   fclose(lab11_file);
 
-  if (pubkey == NULL) {
+  if (pubkey == NULL){
     fprintf(stderr, "PEM_read_PUBKEY has failed \n");
     exit(EXIT_FAILURE);
   }
+
 
   // Verify each message
   for (int i = 0; i < 3; i++) {
@@ -120,33 +121,30 @@ int verify(const char *message_path, const char *sign_path, EVP_PKEY *pubkey) {
   // Look at: https://wiki.openssl.org/index.php/EVP_Signing_and_Verifying
   int msg_len = read_all_bytes(message_path, message, 512);
   int sig_size = read_all_bytes(sign_path, signature, 512);
-  if (sig_size > 0) {
-    signature[0] ^= 0x01;
-  }
+
   EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
-  if (!mdctx) {
+  if(!mdctx) {
     fprintf(stderr, "EVP_MD_CTX has failed \n");
     return -1;
   }
 
-  if (EVP_DigestVerifyInit(mdctx, NULL, EVP_sha256(), NULL, pubkey) != 1) {
+  if (EVP_DigestVerifyInit(mdctx, NULL, EVP_sha256(), NULL, pubkey) != 1){
     fprintf(stderr, "EVP_DigestVerifyInit failed\n");
     EVP_MD_CTX_free(mdctx);
     return -1;
   }
-  if (EVP_DigestVerifyUpdate(mdctx, message, msg_len) != 1) {
+  if(EVP_DigestVerifyUpdate(mdctx, message, msg_len) != 1){
     fprintf(stderr, "EVP_DIgestVerifyUpdate has failed \n");
     EVP_MD_CTX_free(mdctx);
-    return -1;
-  }
+    return -1;}
 
   int verify_update = EVP_DigestVerifyFinal(mdctx, signature, sig_size);
   EVP_MD_CTX_free(mdctx);
 
-  if (verify_update == 1) {
+  if (verify_update == 1 ) {
     return 1;
   }
-  if (verify_update == 0) {
+  if (verify_update == 0 ) {
     return 0;
   }
 
